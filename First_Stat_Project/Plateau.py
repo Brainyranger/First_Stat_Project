@@ -4,11 +4,8 @@ class Plateau:
     def __init__(self, nb_ligne, nb_colonne):
         self.nb_ligne = nb_ligne
         self.nb_colonne = nb_colonne
-        self.tableau = []
+        self.tableau = self.tableau = np.zeros((self.nb_ligne, self.nb_colonne), dtype=int)
     
-    def reset(self):
-        #self.tableau = [[0 for j in range(0, self.nb_colonne)] for i in range(0, self.nb_ligne)]
-        self.tableau = np.zeros((self.nb_ligne, self.nb_colonne), dtype=int)
 
     def liste_succes(self):
         liste = []
@@ -49,9 +46,9 @@ class Plateau:
 
         return liste    
         
-# p = Plateau(6, 7)
+#p = Plateau(6, 7)
 
 # p.reset()
-# print(p.tableau)
+#print(p.tableau)
 
-# print(p.liste_succes())
+#print(p.liste_succes())
