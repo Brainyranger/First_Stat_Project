@@ -8,8 +8,6 @@ class Joueur:
         self.nb_parti_perdu = 0
         self.nb_parti_egalite = 0
 
-    def reset_joueur(self):
-        self.jeton = self.nb_jetons
        
 
     def play(self, jeu):

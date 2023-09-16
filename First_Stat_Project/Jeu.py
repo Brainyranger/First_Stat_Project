@@ -1,10 +1,10 @@
 import numpy as np 
 import random
 from Joueur import Joueur
+from Constante import TAILLE_COLONNE,TAILLE_LIGNE,NB_JETON
 from Plateau import Plateau
 
-TAILLE_COLONNE = 7
-TAILLE_LIGNE  = 6
+
 
 class Jeu:
 
@@ -13,7 +13,6 @@ class Jeu:
         """ Initialisation d'un jeu de plateau avec les joueurs """
         self.j1 = j1
         self.j2 = j2
-        self.j_courant = j1 #par défault
         self.nb_jeton_jouer = 0
         self.plateau = plateau
         self.gagnant = 0
@@ -27,22 +26,11 @@ class Jeu:
         """ réinitialise du jeu """
         self.plateau = Plateau(TAILLE_LIGNE,TAILLE_COLONNE)
         self.nb_jeton_jouer = 0
-        self.j_courant = self.j1
-        self.j1.reset_joueur()
-        self.j2.reset_joueur()
+        self.j1.nb_jetons = NB_JETON
+        self.j2.nb_jetons = NB_JETON
       
        
 
-    def change_jcourant(self):
-        """change le joueur courant"""
-
-        if self.j_courant.id_joueur == self.j1.id_joueur:
-            self.j_courant.nb_jetons -=1
-            self.j_courant = self.j2
-
-        else:
-            self.j_courant.nb_jetons -=1
-            self.j_courant = self.j1
 
     def colonne_disponible(self):
         """Retourne toutes les colonnes où on peut placer un jeton"""
@@ -60,6 +48,7 @@ class Jeu:
         if 0 <= max_index < self.plateau.nb_ligne:
             self.plateau.tableau[(self.plateau.tableau[:,x] != 0).argmax()-1, x] = joueur.id_joueur
             self.nb_jeton_jouer += 1
+            joueur.nb_jetons -=1
         else:
             print("Indice de ligne invalide. Réessayez avec une colonne valide.")
         
@@ -106,7 +95,6 @@ class Jeu:
             print("plateau plein")
             return True
         else:
-            print("plateau pas plein")
             return False
 
             
@@ -115,11 +103,10 @@ class Jeu:
             Elle renvoie 1 ou -1 selon la victoire du joueur 1 ou 2, et 0 en cas de nul."""
 
         while not self.is_finished():
-            self.play(self.j_courant.play(self),self.j_courant)
-            self.change_jcourant()
-            print("Il reste au joueur "+str(self.j1.id_joueur)+" "+str(self.j1.nb_jetons)+" jetons")
-            print("Il reste au joueur "+str(self.j2.id_joueur)+" "+str(self.j2.nb_jetons)+" jetons")
-            print("\n")
+            self.play(self.j1.play(self),self.j1)
+            self.play(self.j2.play(self),self.j2)
+            #print("Il reste au joueur "+str(self.j1.id_joueur)+" "+str(self.j1.nb_jetons)+" jetons")
+            #print("Il reste au joueur "+str(self.j2.id_joueur)+" "+str(self.j2.nb_jetons)+" jetons")
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne:
             return 0
@@ -129,12 +116,3 @@ class Jeu:
         
 
 
-p = Plateau(6,7)
-j1 = Joueur(1,21)
-j2 = Joueur(-1,21)
-
-jeu = Jeu(p,j1,j2)
-#print(jeu.positions_gagnantes())
-
-jeu.run()
-#jeu.reset()

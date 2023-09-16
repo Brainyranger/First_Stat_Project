@@ -11,19 +11,19 @@ class Plateau:
         liste = []
 
         # vertical
-        for i in range(0, self.nb_colonne):
-            j = 0
-            while j + 3 < self.nb_ligne:
-                liste.append([(j, i), (j + 1, i), (j + 2, i), (j + 3, i)])
-                j += 1
+        #for i in range(0, self.nb_colonne):
+            #j = 0
+            #while j + 3 < self.nb_ligne:
+                #liste.append([(j, i), (j + 1, i), (j + 2, i), (j + 3, i)])
+                #j += 1
         
 
         # horizontal
-        for i in range(0, self.nb_ligne):
-            j = 0
-            while j + 3 < self.nb_colonne:
-                liste.append([(i, j), (i, j + 1), (i, j + 2), (i, j + 3)])
-                j += 1
+        #for i in range(0, self.nb_ligne):
+            #j = 0
+            #while j + 3 < self.nb_colonne:
+                #.append([(i, j), (i, j + 1), (i, j + 2), (i, j + 3)])
+                #j += 1
 
         # diagonal
         for i in range(0, self.nb_ligne):
@@ -46,9 +46,3 @@ class Plateau:
 
         return liste    
         
-#p = Plateau(6, 7)
-
-# p.reset()
-#print(p.tableau)
-
-#print(p.liste_succes())
