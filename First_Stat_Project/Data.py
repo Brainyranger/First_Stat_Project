@@ -17,7 +17,7 @@ def data_run(title, joueur1, joueur2, plateau, nb_parts):
     res_joueur1 = []
     res_joueur2 = []
     for i in range(0,nb_parts):
-        gagnat = jeu.run() 
+        gagnat = jeu.run_monte_carlo() 
         if jeu.gagnant == joueur1.id_joueur:
             res_joueur1.append(NB_JETON-jeu.j1.nb_jetons)
         if jeu.gagnant == joueur2.id_joueur:

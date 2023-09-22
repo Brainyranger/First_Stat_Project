@@ -1,8 +1,9 @@
 import numpy as np 
 import random
 from Joueur import Joueur
-from Constante import TAILLE_COLONNE,TAILLE_LIGNE,NB_JETON
+from Constante import TAILLE_COLONNE,TAILLE_LIGNE,NB_JETON, NB_PARTI
 from Plateau import Plateau
+# from MonteCarlo import MonteCarlo
 
 
 
@@ -112,7 +113,60 @@ class Jeu:
             return 0
         
         return self.gagnant
+    
+    def play_monte_carlo(self, joueur):
+        """  Permet de placer un jeton dans la colonne x pour le joueur spécifié """
+        x = self.play_MonteCarlo(joueur)
 
+        max_index = (self.plateau.tableau[:, x] != 0).argmax() 
+        if 0 <= max_index < self.plateau.nb_ligne:
+            self.plateau.tableau[(self.plateau.tableau[:,x] != 0).argmax()-1, x] = joueur.id_joueur
+            self.nb_jeton_jouer += 1
+            joueur.nb_jetons -=1
+        else:
+            print("Indice de ligne invalide. Réessayez avec une colonne valide.")
+
+    def run_monte_carlo(self):
+        """permet de jouer une partie entre le joueur 1 et le joueur 2 : ils jouent à tour de rôle tant que la partie n’est pas finie.
+            Elle renvoie 1 ou -1 selon la victoire du joueur 1 ou 2, et 0 en cas de nul."""
+
+        while not self.is_finished():
+            self.play(self.j1.play_MonteCarlo(self), self.j1)
+            self.play(self.j2.play(self),self.j2)
+            #print("Il reste au joueur "+str(self.j1.id_joueur)+" "+str(self.j1.nb_jetons)+" jetons")
+            #print("Il reste au joueur "+str(self.j2.id_joueur)+" "+str(self.j2.nb_jetons)+" jetons")
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne:
+            return 0
+        
+        return self.gagnant
+    
+    # def play_MonteCarlo(self,joueur):
+        actions = self.colonne_disponible()
+        actions = [[action,0] for action in actions]
+
+        for i in range(1,NB_PARTI):
+            action = random.choice(actions)[0]
+            copie_jeu = Jeu(self.plateau,self.j1,self.j2)
+
+            gagnant = copie_jeu.run()
+
+            if(gagnant == joueur.id_joueur):
+                for j in range(0,len(actions)):
+                    if actions[j][0]==action:
+                        actions[j][1]+=1
+            
+            print(actions)
+
+        max_action = actions[0]
+        for i in range(1, len(actions)):
+            if (actions[i][1] > max_action[1]):
+                max_action = actions[i]
+        
+        return max_action[0]
+
+    def copie(self):
+        return Jeu(self.plateau, self.j1, self.j2)
         
 
 
