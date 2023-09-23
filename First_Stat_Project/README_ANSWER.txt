@@ -39,4 +39,17 @@ Cela la nous permettrait d'avoir avec plus de précision combien de parties uniq
 Question 1.8)
 
  
+Question BanditManchots) 
+
+Au vue des expérinces effectuées nous observons que les algorithmes gloutons (greedy) et les algorithmes aléatoires sont semblables sous 
+certains points. En effet les algorithmes aléatoire ne prennent pas en compte les informations des rangs précédents. De ce fait 
+elle peut choisir des action non optimaux de manière fréquente. L'algorithme de greedy est un peu plus performant car il exploite que les 
+données qu'il connaît. Mais à long terme il sera peu efficace comme l'algorithme aléatoire.
+
+Nos avons deux algorithmes qui ont un meilleur rendement. Tout d'abord l'algorithme e-greedy qui avec le epsilon permet de 
+choisir si on veut exploiter les données en possesion ou explorer d'autres sous-espaces de notre univers pour déterminer
+la donnée la plus utile qu'on recherche. Nous voyons que cette variante est une amélioration de l'algorithme de greedy.
+Le meilleur algorithme que nous pouvons retenir est celle de l'UCB qui altèrne bien entre exploration et exploitation. En effet si exploitation
+car elle permet un bonne analyse de données afin de choisir la valeur plus judicieuse. Et exploration car si l'exploitation ne porte 
+pas un bon rendu, on peut explorer davantage les sous-espaces de notre univers afin d'obtenir un meeilleur résultat.
 

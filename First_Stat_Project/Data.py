@@ -4,6 +4,7 @@ from Jeu import Jeu
 from Plateau import Plateau
 from Constante import NB_JETON
 from Joueur import Joueur
+from BanditManchot import BanditManchot
 from scipy.stats import kde
 
 
@@ -17,7 +18,7 @@ def data_run(title, joueur1, joueur2, plateau, nb_parts):
     res_joueur1 = []
     res_joueur2 = []
     for i in range(0,nb_parts):
-        gagnat = jeu.run_monte_carlo() 
+        gagnat = jeu.run() 
         if jeu.gagnant == joueur1.id_joueur:
             res_joueur1.append(NB_JETON-jeu.j1.nb_jetons)
         if jeu.gagnant == joueur2.id_joueur:
@@ -59,4 +60,90 @@ def data_run(title, joueur1, joueur2, plateau, nb_parts):
    
 
 
+
+def data_baseline_aleatoire(nombre_iteration):
+
+    bandit_aleatoire = BanditManchot()
+    temps = np.arange(nombre_iteration)
+    regret_cumule = np.zeros(nombre_iteration)
+
+    for i in range(nombre_iteration):
+        regret_instantane = bandit_aleatoire.baseline_aleatoire()
+        if i==0:
+            regret_cumule[i] = regret_instantane
+        else:
+            regret_cumule[i] = regret_cumule[i - 1] + regret_instantane
+
+    # Tracer le regret en fonction du temps
+    plt.figure(f"Graph regret baseline_aleatoire en fonction du temps")
+    plt.plot(temps,regret_cumule, label="Baseline_aléatoire")
+    plt.xlabel("Temps")
+    plt.ylabel("Regret cumulé")
+    plt.legend()
+    plt.show()
+
+
+def data_greedyAlgorithmn(nombre_iteration):
+    
+    bandit_aleatoire = BanditManchot()
+    temps = np.arange(nombre_iteration)
+    regret_cumule = np.zeros(nombre_iteration)
+
+    for i in range(nombre_iteration):
+        regret_instantane = bandit_aleatoire.greedy_algorithm()
+        if i==0:
+            regret_cumule[i] = regret_instantane
+        else:
+            regret_cumule[i] = regret_cumule[i - 1] + regret_instantane
+
+    # Tracer le regret en fonction du temps
+    plt.figure(f"Graph regret greedyAlgo en fonction du temps")
+    plt.plot(temps,regret_cumule, label="greedyAlgorithmn")
+    plt.xlabel("Temps")
+    plt.ylabel("Regret cumulé")
+    plt.legend()
+    plt.show()
+
+
+def data_egreedy(nombre_iteration,epsilon):
+    
+    bandit_aleatoire = BanditManchot()
+    temps = np.arange(nombre_iteration)
+    regret_cumule = np.zeros(nombre_iteration)
+
+    for i in range(nombre_iteration):
+        regret_instantane = bandit_aleatoire.e_greedy(epsilon)
+        if i==0:
+            regret_cumule[i] = regret_instantane
+        else:
+            regret_cumule[i] = regret_cumule[i - 1] + regret_instantane
+
+    # Tracer le regret en fonction du temps
+    plt.figure(f"Graph regret E-greedy en fonction du temps")
+    plt.plot(temps,regret_cumule, label="E-greedy")
+    plt.xlabel("Temps")
+    plt.ylabel("Regret cumulé")
+    plt.legend()
+    plt.show()
+
+def data_ucb(nombre_iteration):
+    
+    bandit_aleatoire = BanditManchot()
+    temps = np.arange(nombre_iteration)
+    regret_cumule = np.zeros(nombre_iteration)
+
+    for i in range(nombre_iteration):
+        regret_instantane = bandit_aleatoire.ucb()
+        if i==0:
+            regret_cumule[i] = regret_instantane
+        else:
+            regret_cumule[i] = regret_cumule[i - 1] + regret_instantane
+
+    # Tracer le regret en fonction du temps
+    plt.figure(f"Graph regret UCB en fonction du temps")
+    plt.plot(temps,regret_cumule, label="UCB")
+    plt.xlabel("Temps")
+    plt.ylabel("Regret cumulé")
+    plt.legend()
+    plt.show()
 
