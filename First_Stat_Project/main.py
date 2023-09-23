@@ -13,7 +13,7 @@ from MonteCarlo import MonteCarlo
 p = Plateau(100,170)
 j1 = Joueur(1,21)
 j2 = Joueur(-1,21)
-data_run("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,5)
+data_run("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,100)
 
 # monteCarloExp = MonteCarlo(Jeu(p, j1, j2))
 # print(monteCarloExp.play_MonteCarlo(j1))
