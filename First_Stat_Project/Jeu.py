@@ -17,7 +17,7 @@ class Jeu:
         self.nb_jeton_jouer = 0
         self.plateau = plateau
         self.gagnant = 0
-        self.reset()
+      
        
      
 
@@ -114,17 +114,7 @@ class Jeu:
         
         return self.gagnant
     
-    def play_monte_carlo(self, joueur):
-        """  Permet de placer un jeton dans la colonne x pour le joueur spécifié """
-        x = self.play_MonteCarlo(joueur)
 
-        max_index = (self.plateau.tableau[:, x] != 0).argmax() 
-        if 0 <= max_index < self.plateau.nb_ligne:
-            self.plateau.tableau[(self.plateau.tableau[:,x] != 0).argmax()-1, x] = joueur.id_joueur
-            self.nb_jeton_jouer += 1
-            joueur.nb_jetons -=1
-        else:
-            print("Indice de ligne invalide. Réessayez avec une colonne valide.")
 
     def run_monte_carlo(self):
         """permet de jouer une partie entre le joueur 1 et le joueur 2 : ils jouent à tour de rôle tant que la partie n’est pas finie.
@@ -141,30 +131,7 @@ class Jeu:
         
         return self.gagnant
     
-    # def play_MonteCarlo(self,joueur):
-        actions = self.colonne_disponible()
-        actions = [[action,0] for action in actions]
-
-        for i in range(1,NB_PARTI):
-            action = random.choice(actions)[0]
-            copie_jeu = Jeu(self.plateau,self.j1,self.j2)
-
-            gagnant = copie_jeu.run()
-
-            if(gagnant == joueur.id_joueur):
-                for j in range(0,len(actions)):
-                    if actions[j][0]==action:
-                        actions[j][1]+=1
-            
-            print(actions)
-
-        max_action = actions[0]
-        for i in range(1, len(actions)):
-            if (actions[i][1] > max_action[1]):
-                max_action = actions[i]
-        
-        return max_action[0]
-
+  
     def copie(self):
         return Jeu(self.plateau, self.j1, self.j2)
         
