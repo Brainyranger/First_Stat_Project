@@ -1,9 +1,8 @@
 import numpy as np 
 import random
 from Joueur import Joueur
-from Constante import TAILLE_COLONNE,TAILLE_LIGNE,NB_JETON, NB_PARTI
+from Constante import TAILLE_COLONNE,TAILLE_LIGNE,NB_JETON
 from Plateau import Plateau
-# from MonteCarlo import MonteCarlo
 
 
 
@@ -17,7 +16,7 @@ class Jeu:
         self.nb_jeton_jouer = 0
         self.plateau = plateau
         self.gagnant = 0
-      
+        self.reset()
        
      
 
@@ -113,10 +112,9 @@ class Jeu:
             return 0
         
         return self.gagnant
-    
 
 
-    def run_monte_carlo(self):
+    def run_monte_carlo_vs_aleatoire(self):
         """permet de jouer une partie entre le joueur 1 et le joueur 2 : ils jouent à tour de rôle tant que la partie n’est pas finie.
             Elle renvoie 1 ou -1 selon la victoire du joueur 1 ou 2, et 0 en cas de nul."""
 
@@ -130,8 +128,22 @@ class Jeu:
             return 0
         
         return self.gagnant
-    
-  
+
+    def run_monte_carlo(self):
+        """permet de jouer une partie entre le joueur 1 et le joueur 2 : ils jouent à tour de rôle tant que la partie n’est pas finie.
+            Elle renvoie 1 ou -1 selon la victoire du joueur 1 ou 2, et 0 en cas de nul."""
+
+        while not self.is_finished():
+            self.play(self.j1.play_MonteCarlo(self), self.j1)
+            self.play(self.j2.play_MonteCarlo(self),self.j2)
+            #print("Il reste au joueur "+str(self.j1.id_joueur)+" "+str(self.j1.nb_jetons)+" jetons")
+            #print("Il reste au joueur "+str(self.j2.id_joueur)+" "+str(self.j2.nb_jetons)+" jetons")
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne:
+            return 0
+        
+        return self.gagnant
+
     def copie(self):
         return Jeu(self.plateau, self.j1, self.j2)
         

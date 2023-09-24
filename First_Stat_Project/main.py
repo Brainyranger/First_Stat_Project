@@ -6,24 +6,28 @@ from Constante import NB_JETON
 from Joueur import Joueur
 from BanditManchot import BanditManchot
 from scipy.stats import kde
-from Data import data_run,data_baseline_aleatoire,data_greedyAlgorithmn,data_egreedy,data_ucb
+from Data import data_run,data_baseline_aleatoire,data_greedyAlgorithmn,data_egreedy,data_ucb,data_MonteCarlovsAleatoire,data_MonteCarlo
 
 #création du jeu
 
 p = Plateau(100,170)
 j1 = Joueur(1,21)
 j2 = Joueur(-1,21)
-<<<<<<< HEAD
-data_run("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,100)
-=======
 jeu = Jeu(p,j1,j2)
->>>>>>> d364b18ea7236d083f3d995079f2cce0122b8648
+
+#puissance 4 
 
 #data_run("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
 
+#MonteCarlo
+
+#data_MonteCarlovsAleatoire("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
+#data_MonteCarlo("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
+
+
 #Bandit Manchot 
 
-machine_sous = BanditManchot()
+#machine_sous = BanditManchot()
 
 #print(machine_sous.baseline_aleatoire())
 #print(machine_sous.greedy_algorithm())
@@ -33,4 +37,4 @@ machine_sous = BanditManchot()
 #data_baseline_aleatoire(100)
 #data_greedyAlgorithmn(100)
 #data_egreedy(100,0.3)
-data_ucb(100)
+#data_ucb(100)
