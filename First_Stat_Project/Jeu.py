@@ -142,7 +142,7 @@ class Jeu:
                 self.j1.nb_parti_gagner += 1 
                 self.j2.nb_parti_perdu  += 1
             else:
-                # update des caractéristiques du joueur 1
+                # update des caractéristiques du joueur 2
                 self.j2.nb_parti_gagner += 1 
                 self.j1.nb_parti_perdu  += 1
             return True
