@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Jeu import Jeu
 from Plateau import Plateau
-from Constante import NB_JETON
+from Constante import NB_JETON,NOMBRE_LEVIERS
 from Joueur import Joueur
 from BanditManchot import BanditManchot
 from scipy.stats import kde
@@ -177,7 +177,7 @@ def data_MonteCarlovsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
     plt.grid()
     plt.show()
 
-def data_baseline_aleatoire(nombre_iteration):
+def data_baseline_aleatoire(nombre_iteration,jeu):
     """
     Effectue des simulations avec un bandit manchot utilisant la stratégie "baseline aléatoire".
 
@@ -185,12 +185,14 @@ def data_baseline_aleatoire(nombre_iteration):
         nombre_iteration (int): Le nombre d'itérations pour les simulations.
     """
 
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.baseline_aleatoire()
+        regret_instantane = bandit_aleatoire.baseline_aleatoire(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -205,7 +207,7 @@ def data_baseline_aleatoire(nombre_iteration):
     plt.show()
 
 
-def data_greedyAlgorithmn(nombre_iteration):
+def data_greedyAlgorithmn(nombre_iteration,jeu):
     """
     Effectue des simulations avec un bandit manchot utilisant la stratégie "greedy".
 
@@ -213,12 +215,14 @@ def data_greedyAlgorithmn(nombre_iteration):
         nombre_iteration (int): Le nombre d'itérations pour les simulations.
     """
     
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.greedy_algorithm()
+        regret_instantane = bandit_aleatoire.greedy_algorithm(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -233,7 +237,7 @@ def data_greedyAlgorithmn(nombre_iteration):
     plt.show()
 
 
-def data_egreedy(nombre_iteration,epsilon):
+def data_egreedy(nombre_iteration,epsilon,jeu):
     """
     Effectue des simulations avec un bandit manchot utilisant la stratégie "epsilon-greedy".
 
@@ -242,12 +246,14 @@ def data_egreedy(nombre_iteration,epsilon):
         epsilon (float): Le paramètre epsilon pour la stratégie epsilon-greedy.
     """
 
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.e_greedy(epsilon)
+        regret_instantane = bandit_aleatoire.e_greedy(epsilon,rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -261,7 +267,7 @@ def data_egreedy(nombre_iteration,epsilon):
     plt.legend()
     plt.show()
 
-def data_ucb(nombre_iteration):
+def data_ucb(nombre_iteration,jeu):
     """
     Effectue des simulations avec un bandit manchot utilisant la stratégie "Upper Confidence Bound (UCB)".
 
@@ -269,12 +275,15 @@ def data_ucb(nombre_iteration):
         nombre_iteration (int): Le nombre d'itérations pour les simulations.
     """
     
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.ucb()
+        regret_instantane = bandit_aleatoire.ucb(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:

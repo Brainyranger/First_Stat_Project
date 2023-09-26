@@ -1,5 +1,5 @@
 import numpy as np
-from Constante import NOMBRE_LEVIERS
+
 
 
 class BanditManchot:
@@ -27,7 +27,7 @@ class BanditManchot:
 
 
 
-    def __init__(self):
+    def __init__(self,jeu):
         """
         Initialise un bandit manchot.
 
@@ -40,10 +40,9 @@ class BanditManchot:
             probabilites_succes (list): Liste des probabilités de succès pour chaque levier.
         """
 
-        self.rec_moy_est =  [0.0] * NOMBRE_LEVIERS
-        self.nb_fois =  [0]* NOMBRE_LEVIERS
         self.temps_total = 0
-        self.probabilites_succes = [np.random.uniform(0, 1) for _ in range(NOMBRE_LEVIERS)]
+        self.nombre_leviers = jeu.colonne_disponible()
+        self.probabilites_succes = [np.random.uniform(0, 1) for _ in range(len(self.nombre_leviers))]
 
 
     
@@ -70,61 +69,102 @@ class BanditManchot:
         else:
             return 0  
 
-    def baseline_aleatoire(self):
+    def baseline_aleatoire(self, rec_moy_est, nb_fois):
         """
         Applique la stratégie de sélection d'action aléatoire (baseline aléatoire).
 
+        Args:
+        rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+        nb_fois (list): Liste des compteurs d'action pour chaque action.
+
         Returns:
-            int: L'indice de l'action choisie.
+        int: L'indice de l'action choisie de manière aléatoire.
 
         Note:
         Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action.
 
         """
 
-        action_choisie = np.random.choice(range(0, len(self.rec_moy_est))) #choisi une action disponible 
+        action_choisie = np.random.choice(range(0, len(rec_moy_est))) #choisi une action disponible 
         recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie) # on détermine la récompense associé à l'action
 
         #update 
-        self.nb_fois[action_choisie] += 1
-        self.rec_moy_est[action_choisie] = (self.rec_moy_est[action_choisie] * (self.nb_fois[action_choisie] - 1) + recompense) / self.nb_fois[action_choisie]
+        nb_fois[action_choisie] += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
        
 
         return action_choisie
 
-    def greedy_algorithm(self):
+    def greedy_algorithm(self, rec_moy_est, nb_fois):
         """
-        Applique la stratégie de sélection d'action greedy (exploitation).
+         Applique la stratégie de sélection d'action greedy (exploitation).
+
+        Args:
+        rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+        nb_fois (list): Liste des compteurs d'action pour chaque action.
 
         Returns:
-            int: Le gain (1 ou 0) de l'action choisie.
+        int: Le gain (1 ou 0) de l'action choisie.
 
         Note:
         Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action.
 
         """
 
-        if np.min(self.rec_moy_est) == 0:#on vérfie si il nous reste des actions à explorer
-            return self.baseline_aleatoire()
+        if np.min(rec_moy_est) == 0:#on vérfie si il nous reste des actions à explorer
+            return self.baseline_aleatoire(rec_moy_est,nb_fois)
     
-        action_choisie = np.argmax(self.rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne 
+        action_choisie = np.argmax(rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne 
         
         recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#on détermine la récompense associé à l'action
      
         #update
-        self.nb_fois[action_choisie] += 1
-        self.rec_moy_est[action_choisie] = (self.rec_moy_est[action_choisie] * (self.nb_fois[action_choisie] - 1) + recompense) / self.nb_fois[action_choisie]
+        nb_fois[action_choisie] += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fo is[action_choisie]
     
     
         return recompense
 
+    def greedy_algorithm_return_action(self, rec_moy_est, nb_fois):
+        """
+         Applique la stratégie de sélection d'action greedy (exploitation).
 
-    def e_greedy(self,epsilon):
-         """
+        Args:
+        rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+        nb_fois (list): Liste des compteurs d'action pour chaque action.
+
+        Returns:
+        int:  l'action choisie.
+
+        Note:
+        Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action.
+
+        """
+
+        if np.min(rec_moy_est) == 0:#on vérfie si il nous reste des actions à explorer
+            return self.baseline_aleatoire(rec_moy_est,nb_fois)
+    
+        action_choisie = np.argmax(rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne 
+        
+        recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#on détermine la récompense associé à l'action
+     
+        #update
+        nb_fois[action_choisie] += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fo is[action_choisie]
+    
+    
+        return action_choisie
+
+
+
+    def e_greedy(self,epsilon, rec_moy_est, nb_fois):
+        """
         Applique la stratégie de sélection d'action epsilon-greedy.
 
         Args:
             epsilon (float): Le paramètre epsilon pour le choix de l'action.
+            rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+            nb_fois (list): Liste des compteurs d'action pour chaque action.
 
         Returns:
             int: Le gain (1 ou 0) de l'action choisie.
@@ -136,27 +176,64 @@ class BanditManchot:
 
         while True:
             if np.random.random() < epsilon:#On teste si on chosi l'action de manière aléatoire ou non
-                return self.baseline_aleatoire()
+                return self.baseline_aleatoire(rec_moy_est,nb_fois)
             else:
                 break
                 
-        action_choisie = np.argmax(self.rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne
+        action_choisie = np.argmax(rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne
         
         recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#on détermine la récompense associé à l'action
 
         #update
-        self.nb_fois[action_choisie] += 1
-        self.rec_moy_est[action_choisie] = (self.rec_moy_est[action_choisie] * (self.nb_fois[action_choisie] - 1) + recompense) / self.nb_fois[action_choisie]
+        nb_fois[action_choisie] += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
     
         return recompense
 
+    def e_greedy_return_action(self,epsilon, rec_moy_est, nb_fois):
+        """
+        Applique la stratégie de sélection d'action epsilon-greedy.
+
+        Args:
+            epsilon (float): Le paramètre epsilon pour le choix de l'action.
+            rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+            nb_fois (list): Liste des compteurs d'action pour chaque action.
+
+        Returns:
+            int: l'action choisie.
+
+        Note:
+        Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action.
+
+        """
+
+        while True:
+            if np.random.random() < epsilon:#On teste si on chosi l'action de manière aléatoire ou non
+                return self.baseline_aleatoire(rec_moy_est,nb_fois)
+            else:
+                break
+                
+        action_choisie = np.argmax(rec_moy_est)# on choisi l'action avec le plus de récompenses en moyenne
+        
+        recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#on détermine la récompense associé à l'action
+
+        #update
+        nb_fois[action_choisie] += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
+    
+        return  action_choisie
 
 
-    def ucb(self):
+
+    def ucb(self, rec_moy_est, nb_fois):
         """
         Implémente la stratégie UCB (Upper Confidence Bound) pour choisir l'action à entreprendre.
 
         La méthode calcule les valeurs UCB pour chaque action, choisit l'action avec la plus grande valeur UCB et renvoie la récompense binaire associée à cette action.
+
+        Args:
+        rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+        nb_fois (list): Liste des compteurs d'action pour chaque action.
 
         Returns:
         int: La récompense binaire (1 ou 0) de l'action choisie selon la stratégie UCB.
@@ -165,16 +242,16 @@ class BanditManchot:
         Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action et le temps total.
 
         """
-        ucb_values = np.zeros(NOMBRE_LEVIERS)
+        ucb_values = np.zeros(len(self.nombre_leviers))
         action_choisie = 0
         exploitation_term = 0
         exploration_term = 0
-        for i in range(NOMBRE_LEVIERS):
-            if self.nb_fois[i] == 0:#on vérifie qu'une action à déjà été choisi ou non
+        for i in range(0,len(self.nombre_leviers)):
+            if nb_fois[i] == 0:#on vérifie qu'une action à déjà été choisi ou non
                 action_choisie = i
             else:
-                exploitation_term = self.rec_moy_est[i] #moyenne de recompense estimée pour l'action i 
-                exploration_term = np.sqrt(2 * np.log(self.temps_total) / self.nb_fois[i])# formule UCB appliquée 
+                exploitation_term = rec_moy_est[i] #moyenne de recompense estimée pour l'action i 
+                exploration_term = np.sqrt(2 * np.log(self.temps_total) / nb_fois[i])# formule UCB appliquée 
                 ucb_values[i] = exploitation_term + exploration_term
                
       
@@ -182,21 +259,51 @@ class BanditManchot:
         recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#la récompense associé à la meilleur action
 
         #update
-        self.nb_fois[action_choisie] += 1
+        nb_fois[action_choisie] += 1
         self.temps_total += 1
-        self.rec_moy_est[action_choisie] = (self.rec_moy_est[action_choisie] * (self.nb_fois[action_choisie] - 1) + recompense) / self.nb_fois[action_choisie]
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
 
-        return recompense
+        return  recompense
 
     
-    def reset_action(self):
+    def ucb_return_action(self, rec_moy_est, nb_fois):
         """
-        Réinitialise les statistiques des actions du bandit.
+        Implémente la stratégie UCB (Upper Confidence Bound) pour choisir l'action à entreprendre.
 
-        Cette méthode réinitialise les estimations des récompenses moyennes, les compteurs d'action et le temps total écoulé.
-        Cela permet de remettre à zéro les statistiques pour préparer de nouvelles séries d'actions.
+        La méthode calcule les valeurs UCB pour chaque action, choisit l'action avec la plus grande valeur UCB et renvoie la récompense binaire associée à cette action.
+
+        Args:
+        rec_moy_est (list): Liste des estimations de récompenses moyennes pour chaque action.
+        nb_fois (list): Liste des compteurs d'action pour chaque action.
+
+        Returns:
+        int: l'action choisie selon la stratégie UCB.
+
+        Note:
+        Cette méthode met à jour les estimations de récompenses moyennes, les compteurs d'action et le temps total.
 
         """
-        self.rec_moy_est =  [0.0] * NOMBRE_LEVIERS
-        self.nb_fois =  [0]* NOMBRE_LEVIERS
-        self.temps_total = 0
+        ucb_values = np.zeros(len(self.nombre_leviers))
+        action_choisie = 0
+        exploitation_term = 0
+        exploration_term = 0
+        for i in range(0,len(self.nombre_leviers)):
+            if nb_fois[i] == 0:#on vérifie qu'une action à déjà été choisi ou non
+                action_choisie = i
+            else:
+                exploitation_term = rec_moy_est[i] #moyenne de recompense estimée pour l'action i 
+                exploration_term = np.sqrt(2 * np.log(self.temps_total) / nb_fois[i])# formule UCB appliquée 
+                ucb_values[i] = exploitation_term + exploration_term
+               
+      
+        action_choisie = np.argmax(ucb_values)#on choisi la meilleur action 
+        recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie)#la récompense associé à la meilleur action
+
+        #update
+        nb_fois[action_choisie] += 1
+        self.temps_total += 1
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
+
+        return  action_choisie
+
+    

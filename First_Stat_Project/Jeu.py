@@ -51,7 +51,7 @@ class Jeu:
 
 
     def reset(self):
-         """
+        """
         Réinitialise le jeu pour une nouvelle partie en remettant à zéro le plateau, les jetons des joueurs,
         et le nombre de jetons joués.
         """
@@ -108,7 +108,7 @@ class Jeu:
 
 
     def has_won(self):
-         """
+        """
         Vérifie si l'un des joueurs a gagné en parcourant les positions gagnantes.
 
         Returns:
@@ -142,7 +142,7 @@ class Jeu:
                 self.j1.nb_parti_gagner += 1 
                 self.j2.nb_parti_perdu  += 1
             else:
-                # update des caractéristiques du joueur 2
+                # update des caractéristiques du joueur 1
                 self.j2.nb_parti_gagner += 1 
                 self.j1.nb_parti_perdu  += 1
             return True

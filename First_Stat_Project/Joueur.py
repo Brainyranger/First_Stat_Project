@@ -2,7 +2,7 @@ import numpy as np
 from Constante import NB_PARTI
 
 class Joueur:
-       """
+    """
     Classe représentant un joueur pour un jeu de plateau.
 
     Attributes:

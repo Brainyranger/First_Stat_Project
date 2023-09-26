@@ -1,7 +1,7 @@
 import numpy as np
 
 class Plateau:
-     """
+    """
     Classe représentant un plateau de jeu rectangulaire.
 
     Attributes:
