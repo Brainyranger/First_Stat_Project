@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Jeu import Jeu
 from Plateau import Plateau
-from Constante import NB_JETON
+from Constante import NB_JETON,NOMBRE_LEVIERS
 from Joueur import Joueur
 from BanditManchot import BanditManchot
 from scipy.stats import kde
@@ -11,7 +11,17 @@ from scipy.stats import kde
 
 
 def data_run(title, joueur1, joueur2, plateau, nb_parts):
-    """ Lance une partie entre 2 joueurs et etudie le nombre de coup jusqu'à une victoire, pour le joueur 1 et pour le joueur 2 """
+    """
+    Lance une partie entre 2 joueurs et étudie le nombre de coups jusqu'à une victoire, pour le joueur 1 et pour le joueur 2.
+
+    Args:
+        title (str): Le titre de l'expérience.
+        joueur1 (Joueur): Le joueur 1.
+        joueur2 (Joueur): Le joueur 2.
+        plateau (Plateau): L'objet Plateau représentant le plateau de jeu.
+        nb_parts (int): Le nombre de parties à jouer.
+
+    """
 
 
     jeu = Jeu(plateau,joueur1,joueur2)
@@ -60,6 +70,17 @@ def data_run(title, joueur1, joueur2, plateau, nb_parts):
    
 
 def data_MonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
+    """
+    Lance une partie entre 2 joueurs utilisant la méthode Monte Carlo pour choisir les coups,
+    et étudie le nombre de coups jusqu'à une victoire, pour le joueur 1 et pour le joueur 2.
+
+    Args:
+        title (str): Le titre de l'expérience.
+        joueur1 (Joueur): Le joueur 1.
+        joueur2 (Joueur): Le joueur 2.
+        plateau (Plateau): L'objet Plateau représentant le plateau de jeu.
+        nb_parts (int): Le nombre de parties à jouer.
+    """
 
     jeu = Jeu(plateau,joueur1,joueur2)
     res_joueur1 = []
@@ -86,7 +107,7 @@ def data_MonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
 
-     #trace le graphique de densite
+    #trace le graphique de densite
     density_1 = kde.gaussian_kde(np.array(res_joueur1))
     density_2 = kde.gaussian_kde(np.array(res_joueur2))
     x = np.linspace(4,20,300)
@@ -103,6 +124,17 @@ def data_MonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     plt.show()
 
 def data_MonteCarlovsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
+    """
+    Lance une partie entre 2 joueurs, où le joueur 1 utilise la méthode Monte Carlo pour choisir les coups,
+    et le joueur 2 joue de manière aléatoire, et étudie le nombre de coups jusqu'à une victoire, pour le joueur 1 et pour le joueur 2.
+
+    Args:
+        title (str): Le titre de l'expérience.
+        joueur1 (Joueur): Le joueur 1 (utilisant Monte Carlo).
+        joueur2 (Joueur): Le joueur 2 (jouant de manière aléatoire).
+        plateau (Plateau): L'objet Plateau représentant le plateau de jeu.
+        nb_parts (int): Le nombre de parties à jouer.
+    """
 
     jeu = Jeu(plateau,joueur1,joueur2)
     res_joueur1 = []
@@ -145,14 +177,22 @@ def data_MonteCarlovsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
     plt.grid()
     plt.show()
 
-def data_baseline_aleatoire(nombre_iteration):
+def data_baseline_aleatoire(nombre_iteration,jeu):
+    """
+    Effectue des simulations avec un bandit manchot utilisant la stratégie "baseline aléatoire".
 
-    bandit_aleatoire = BanditManchot()
+    Args:
+        nombre_iteration (int): Le nombre d'itérations pour les simulations.
+    """
+
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.baseline_aleatoire()
+        regret_instantane = bandit_aleatoire.baseline_aleatoire(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -167,14 +207,22 @@ def data_baseline_aleatoire(nombre_iteration):
     plt.show()
 
 
-def data_greedyAlgorithmn(nombre_iteration):
+def data_greedyAlgorithmn(nombre_iteration,jeu):
+    """
+    Effectue des simulations avec un bandit manchot utilisant la stratégie "greedy".
+
+    Args:
+        nombre_iteration (int): Le nombre d'itérations pour les simulations.
+    """
     
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.greedy_algorithm()
+        regret_instantane = bandit_aleatoire.greedy_algorithm(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -189,14 +237,23 @@ def data_greedyAlgorithmn(nombre_iteration):
     plt.show()
 
 
-def data_egreedy(nombre_iteration,epsilon):
-    
-    bandit_aleatoire = BanditManchot()
+def data_egreedy(nombre_iteration,epsilon,jeu):
+    """
+    Effectue des simulations avec un bandit manchot utilisant la stratégie "epsilon-greedy".
+
+    Args:
+        nombre_iteration (int): Le nombre d'itérations pour les simulations.
+        epsilon (float): Le paramètre epsilon pour la stratégie epsilon-greedy.
+    """
+
+    bandit_aleatoire = BanditManchot(jeu)
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.e_greedy(epsilon)
+        regret_instantane = bandit_aleatoire.e_greedy(epsilon,rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
@@ -210,14 +267,23 @@ def data_egreedy(nombre_iteration,epsilon):
     plt.legend()
     plt.show()
 
-def data_ucb(nombre_iteration):
+def data_ucb(nombre_iteration,jeu):
+    """
+    Effectue des simulations avec un bandit manchot utilisant la stratégie "Upper Confidence Bound (UCB)".
+
+    Args:
+        nombre_iteration (int): Le nombre d'itérations pour les simulations.
+    """
     
-    bandit_aleatoire = BanditManchot()
+    bandit_aleatoire = BanditManchot(jeu)
+    
+    rec_moy_est =  [0.0] * len(jeu.colonne_disponible())
+    nb_fois =  [0]* len(jeu.colonne_disponible())
     temps = np.arange(nombre_iteration)
     regret_cumule = np.zeros(nombre_iteration)
 
     for i in range(nombre_iteration):
-        regret_instantane = bandit_aleatoire.ucb()
+        regret_instantane = bandit_aleatoire.ucb(rec_moy_est,nb_fois)
         if i==0:
             regret_cumule[i] = regret_instantane
         else:
