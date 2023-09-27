@@ -27,14 +27,14 @@ jeu = Jeu(p,j1,j2)
 
 #Bandit Manchot 
 
-#machine_sous = BanditManchot()
+machine_sous = BanditManchot(jeu)
 
 #print(machine_sous.baseline_aleatoire())
 #print(machine_sous.greedy_algorithm())
 #print(machine_sous.e_greedy(0.3))
 #print(machine_sous.ucb())
 
-#data_baseline_aleatoire(100)
-#data_greedyAlgorithmn(100)
-#data_egreedy(100,0.3)
-#data_ucb(100)
+#data_baseline_aleatoire(100,jeu)
+#data_greedyAlgorithmn(100,jeu)
+#data_egreedy(100,0.3,jeu)
+data_ucb(100,jeu)
