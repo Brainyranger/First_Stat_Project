@@ -1,13 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from Jeu import Jeu
 from Plateau import Plateau
-from Constante import NB_JETON
 from Joueur import Joueur
 from BanditManchot import BanditManchot
-from scipy.stats import kde
-from Data import data_run,data_baseline_aleatoire,data_greedyAlgorithmn,data_egreedy,data_ucb,data_MonteCarlovsAleatoire,data_MonteCarlo
-
+from UCT import UCT
+from Data import *
 #création du jeu
 
 p = Plateau(100,170)
@@ -21,8 +17,8 @@ jeu = Jeu(p,j1,j2)
 
 #MonteCarlo
 
-#data_MonteCarlovsAleatoire("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
-#data_MonteCarlo("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
+# data_MonteCarlovsAleatoire("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
+# data_MonteCarlo("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
 
 
 #Bandit Manchot 
@@ -37,4 +33,12 @@ machine_sous = BanditManchot(jeu)
 #data_baseline_aleatoire(100,jeu)
 #data_greedyAlgorithmn(100,jeu)
 #data_egreedy(100,0.3,jeu)
-data_ucb(100,jeu)
+# data_ucb(100,jeu)
+
+
+# uct = UCT(jeu, j1)
+# action = uct.play_uct(10)
+
+data_UCTvsAleatoire("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)
+
+# data_UCTvsMonteCarlo("data_experimental Joueur 1 vs Joueur 2",j1,j2,p,50)

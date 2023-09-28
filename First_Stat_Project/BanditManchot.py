@@ -120,7 +120,7 @@ class BanditManchot:
      
         #update
         nb_fois[action_choisie] += 1
-        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fo is[action_choisie]
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fois[action_choisie]
     
     
         return recompense
@@ -150,7 +150,7 @@ class BanditManchot:
      
         #update
         nb_fois[action_choisie] += 1
-        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fo is[action_choisie]
+        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) /nb_fois[action_choisie]
     
     
         return action_choisie
