@@ -50,20 +50,24 @@ def data_run(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
 
+    plt.savefig("image_Aleatoire_vs_Aleatoire_hist.jpg")
+    plt.show()
+
     #trace le graphique de densite
     density_1 = kde.gaussian_kde(np.array(res_joueur1))
     density_2 = kde.gaussian_kde(np.array(res_joueur2))
     x = np.linspace(4,20,300)
     y1 = density_1(x)
     y2 = density_2(x) 
-    #plt.plot(x,y1,label="joueur 1")
-    #plt.plot(x,y2,label="joueur 2")
-    #plt.ylabel("Densité")
-    #plt.xlabel("Nombre de Coups")
+    plt.plot(x,y1,label="joueur 1")
+    plt.plot(x,y2,label="joueur 2")
+    plt.ylabel("Densité")
+    plt.xlabel("Nombre de Coups")
     
     
     plt.legend()
     plt.grid()
+    plt.savefig("image_Aleatoire_vs_Aleatoire_densite.jpg")
     plt.show()
    
 
@@ -105,18 +109,22 @@ def data_MonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
 
+    plt.savefig("image_MonteCarlo_vs_MonteCarlo_hist.jpg")
+    plt.show()
+
     #trace le graphique de densite
     density_1 = kde.gaussian_kde(np.array(res_joueur1))
     density_2 = kde.gaussian_kde(np.array(res_joueur2))
     x = np.linspace(4,20,300)
     y1 = density_1(x)
-    y2 = density_2(x) 
-    #plt.plot(x,y1,label="joueur 1")
-    #plt.plot(x,y2,label="joueur 2")
-    #plt.ylabel("Densité")
-    #plt.xlabel("Nombre de Coups")
+    y2 = density_2(x)
+
+    plt.plot(x,y1,label="joueur 1")
+    plt.plot(x,y2,label="joueur 2")
+    plt.ylabel("Densité")
+    plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_MonteCarlo_vs_MonteCarlo_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -159,18 +167,21 @@ def data_MonteCarlovsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
 
+    plt.savefig("image_MonteCarlo_vs_Aleatoire_hist.jpg")
+    plt.show()
+
      #trace le graphique de densite
     density_1 = kde.gaussian_kde(np.array(res_joueur1))
     density_2 = kde.gaussian_kde(np.array(res_joueur2))
     x = np.linspace(4,20,300)
     y1 = density_1(x)
     y2 = density_2(x) 
-    #plt.plot(x,y1,label="joueur 1")
-    #plt.plot(x,y2,label="joueur 2")
-    #plt.ylabel("Densité")
-    #plt.xlabel("Nombre de Coups")
+    plt.plot(x,y1,label="joueur 1")
+    plt.plot(x,y2,label="joueur 2")
+    plt.ylabel("Densité")
+    plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_MonteCarlo_vs_Aleatoire_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -202,6 +213,7 @@ def data_baseline_aleatoire(nombre_iteration,jeu):
     plt.xlabel("Temps")
     plt.ylabel("Regret cumulé")
     plt.legend()
+    plt.savefig("base_line_aleartoire.jpg")
     plt.show()
 
 
@@ -232,6 +244,7 @@ def data_greedyAlgorithmn(nombre_iteration,jeu):
     plt.xlabel("Temps")
     plt.ylabel("Regret cumulé")
     plt.legend()
+    plt.savefig("image_greedy.jpg")
     plt.show()
 
 
@@ -263,6 +276,7 @@ def data_egreedy(nombre_iteration,epsilon,jeu):
     plt.xlabel("Temps")
     plt.ylabel("Regret cumulé")
     plt.legend()
+    plt.savefig("image_egreedy.jpg")
     plt.show()
 
 def data_ucb(nombre_iteration,jeu):
@@ -293,6 +307,7 @@ def data_ucb(nombre_iteration,jeu):
     plt.xlabel("Temps")
     plt.ylabel("Regret cumulé")
     plt.legend()
+    plt.savefig("image_ucb.jpg")
     plt.show()
 
 
@@ -333,6 +348,7 @@ def data_UCTvsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_UCT_vs_Aleatoire_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -349,6 +365,7 @@ def data_UCTvsAleatoire(title, joueur1, joueur2, plateau, nb_parts):
     
     plt.legend()
     plt.grid()
+    plt.savefig("image_UCT_vs_Aleatoire_densite.jpg")
     plt.show()
 
 def data_UCTvsMonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
@@ -388,6 +405,7 @@ def data_UCTvsMonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_UCT_vs_MonteCarlo_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -404,4 +422,5 @@ def data_UCTvsMonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     
     plt.legend()
     plt.grid()
+    plt.savefig("image_UCT_vs_MonteCarlo_densite.jpg")
     plt.show()
