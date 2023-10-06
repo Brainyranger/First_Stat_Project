@@ -419,7 +419,7 @@ def data_UCTvsMonteCarlo(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Densité")
     plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_UCT_vs_MonteCarlo_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -461,6 +461,7 @@ def data_UCTvsUCB(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_UCT_vs_UCB_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -474,7 +475,7 @@ def data_UCTvsUCB(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Densité")
     plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_UCT_vs_UCB_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -516,6 +517,7 @@ def data_UCBvsGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_UCB_vs_Greedy_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -529,7 +531,7 @@ def data_UCBvsGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Densité")
     plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_UCB_vs_Greedy_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -571,6 +573,7 @@ def data_UCBvsEGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_UCB_vs_EGreedy_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -584,7 +587,7 @@ def data_UCBvsEGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Densité")
     plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_UCB_vs_EGreedy_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
@@ -626,6 +629,7 @@ def data_GreedyvsEGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.hist(np.array(res_joueur1),bins=25,label="joueur 1")
     plt.ylabel("Nb victoires")
     plt.xlabel("Nb Coups")
+    plt.savefig("image_Greedy_vs_EGreedy_hist.jpg")
     plt.show()
 
      #trace le graphique de densite
@@ -639,7 +643,7 @@ def data_GreedyvsEGreedy(title, joueur1, joueur2, plateau, nb_parts):
     plt.ylabel("Densité")
     plt.xlabel("Nombre de Coups")
     
-    
+    plt.savefig("image_Greedy_vs_EGreedy_densite.jpg")
     plt.legend()
     plt.grid()
     plt.show()
