@@ -89,6 +89,11 @@ j1 = Joueur(1, NB_JETON)
 j2 = Joueur(-1, NB_JETON)
 jeu = Jeu(p, j1, j2)
 
-main_menu()
+# data_UCTvsUCB("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+# data_UCBvsGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+# data_UCBvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+data_GreedyvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+
+# main_menu()
 
 

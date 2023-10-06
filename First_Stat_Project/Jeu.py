@@ -1,6 +1,7 @@
 import numpy as np 
 from Plateau import Plateau
 from UCT import UCT
+from BanditManchot import BanditManchot
 from Constante import *
 
 
@@ -167,8 +168,8 @@ class Jeu:
         """
 
         while not self.is_finished():
-            self.play(self.j1.play(self),self.j1)#joueur 1 joue de manière aléatoire
-            self.play(self.j2.play(self),self.j2)#joueur 2 joue de manière aléatoire
+            self.play(self.j1.play(self),self.j1)
+            self.play(self.j2.play(self),self.j2)
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: #si le jeu se termine, on vérifie si il y a eu égalité
             return 0
@@ -186,8 +187,8 @@ class Jeu:
         """
 
         while not self.is_finished():
-            self.play(self.j1.play_MonteCarlo(self), self.j1)#joueur 1 joue avec la stratégie MonteCarlo
-            self.play(self.j2.play(self),self.j2)#joueur 2 joue de manière aléatoire 
+            self.play(self.j1.play_MonteCarlo(self), self.j1)
+            self.play(self.j2.play(self),self.j2)
         
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
@@ -204,8 +205,8 @@ class Jeu:
         """
 
         while not self.is_finished():
-            self.play(self.j1.play_MonteCarlo(self), self.j1)#joueur 1 joue avec la stratégie MonteCarlo
-            self.play(self.j2.play_MonteCarlo(self),self.j2)#joueur 2 joue avec la stratégie MonteCarlo
+            self.play(self.j1.play_MonteCarlo(self), self.j1)
+            self.play(self.j2.play_MonteCarlo(self),self.j2)
            
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
@@ -223,8 +224,8 @@ class Jeu:
         """
         while not self.is_finished():
             uct = UCT(self, self.j1)
-            self.play(uct.play_uct(NB_PARTI), self.j1)#joueur 1 joue avec la stratégie MonteCarlo
-            self.play(self.j2.play(self),self.j2)#joueur 2 joue avec la stratégie MonteCarlo
+            self.play(uct.play_uct(NB_PARTI), self.j1)
+            self.play(self.j2.play(self),self.j2)
            
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
@@ -242,8 +243,31 @@ class Jeu:
         """
         while not self.is_finished():
             uct = UCT(self, self.j1)
-            self.play(uct.play_uct(NB_PARTI), self.j1)#joueur 1 joue avec la stratégie MonteCarlo
-            self.play(self.j2.play_MonteCarlo(self),self.j2)#joueur 2 joue avec la stratégie MonteCarlo
+            self.play(uct.play_uct(NB_PARTI), self.j1)
+            self.play(self.j2.play_MonteCarlo(self),self.j2)
+           
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
+            return 0
+        
+        return self.gagnant
+    
+    def run_uct_vs_ucb(self):
+        """
+        Permet de jouer une partie où le joueur 1 utilise la méthode UCT pour choisir ses coups,
+        tandis que le joueur 2 joue de manière aléatoire.
+
+        Returns:
+            int: L'identifiant du joueur gagnant (1 ou 2) ou 0 en cas de nul.
+        """
+        while not self.is_finished():
+            uct = UCT(self, self.j1)
+            bandit_alea = BanditManchot(self)
+            rec_moy_est =  [0.0] * len(self.colonne_disponible())
+            nb_fois =  [0]* len(self.colonne_disponible())
+            best_child = bandit_alea.ucb_return_action(rec_moy_est, nb_fois)
+            self.play(uct.play_uct(NB_PARTI), self.j1)
+            self.play(best_child,self.j2)
            
 
         if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
@@ -251,6 +275,28 @@ class Jeu:
         
         return self.gagnant
 
+    def run_ucb_vs_greedy(self):
+        """
+        Permet de jouer une partie où le joueur 1 utilise la méthode UCT pour choisir ses coups,
+        tandis que le joueur 2 joue de manière aléatoire.
+
+        Returns:
+            int: L'identifiant du joueur gagnant (1 ou 2) ou 0 en cas de nul.
+        """
+        while not self.is_finished():
+            bandit_alea = BanditManchot(self)
+            rec_moy_est =  [0.0] * len(self.colonne_disponible())
+            nb_fois =  [0]* len(self.colonne_disponible())
+            best_child_ucb = bandit_alea.ucb_return_action(rec_moy_est, nb_fois)
+            best_child_greedy = bandit_alea.greedy_algorithm_return_action(rec_moy_est, nb_fois)
+            self.play(best_child_ucb,self.j2)
+            self.play(best_child_greedy, self.j1)
+           
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
+            return 0
+        
+        return self.gagnant
     
     def copie(self):
         """
@@ -262,6 +308,53 @@ class Jeu:
 
         """
         return Jeu(self.plateau, self.j1, self.j2)
+    
+    def run_ucb_vs_egreedy(self):
+        """
+        Permet de jouer une partie où le joueur 1 utilise la méthode UCT pour choisir ses coups,
+        tandis que le joueur 2 joue de manière aléatoire.
+
+        Returns:
+            int: L'identifiant du joueur gagnant (1 ou 2) ou 0 en cas de nul.
+        """
+        while not self.is_finished():
+            bandit_alea = BanditManchot(self)
+            rec_moy_est =  [0.0] * len(self.colonne_disponible())
+            nb_fois =  [0]* len(self.colonne_disponible())
+            best_child_ucb = bandit_alea.ucb_return_action(rec_moy_est, nb_fois)
+            best_child_greedy = bandit_alea.e_greedy_return_action(0.3, rec_moy_est, nb_fois)
+            self.play(best_child_ucb,self.j2)
+            self.play(best_child_greedy, self.j1)
+           
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
+            return 0
+        
+        return self.gagnant
+    
+    def run_greedy_vs_egreedy(self):
+        """
+        Permet de jouer une partie où le joueur 1 utilise la méthode UCT pour choisir ses coups,
+        tandis que le joueur 2 joue de manière aléatoire.
+
+        Returns:
+            int: L'identifiant du joueur gagnant (1 ou 2) ou 0 en cas de nul.
+        """
+        while not self.is_finished():
+            bandit_alea = BanditManchot(self)
+            rec_moy_est =  [0.0] * len(self.colonne_disponible())
+            nb_fois =  [0]* len(self.colonne_disponible())
+            best_child_greedy = bandit_alea.greedy_algorithm_return_action(rec_moy_est, nb_fois)
+            best_child_egreedy = bandit_alea.e_greedy_return_action(0.3, rec_moy_est, nb_fois)
+            self.play(best_child_greedy,self.j2)
+            self.play(best_child_egreedy, self.j1)
+           
+
+        if self.nb_jeton_jouer == self.plateau.nb_ligne*self.plateau.nb_colonne: # Test du match nul 
+            return 0
+        
+        return self.gagnant
+    
         
 
 
