@@ -4,7 +4,7 @@ Lancez :
 
 python main.py (sous windows)
 
-python3 main.py (sous linux 
+python3 main.py (sous linux) 
 
 
 Vous aurez des choix présentés sur le terminal : 
