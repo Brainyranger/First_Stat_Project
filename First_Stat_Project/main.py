@@ -13,7 +13,8 @@ def main_menu():
         print("2. Bandit Manchot")
         print("3. Monte Carlo")
         print("4. UCT")
-        print("5. Exit")
+        print("5. Comparaison Exploration Exploitation Equilibré")
+        print("6. Exit")
 
         choice = input("Votre choix: ")
 
@@ -30,6 +31,9 @@ def main_menu():
             menu_UCT()
             break
         elif choice == '5':
+            menu_Comparaison()
+            break
+        elif choice == '6':
             print("Exiting the program.")
             break
         else:
@@ -80,6 +84,25 @@ def menu_UCT():
     else:
         print("Choix invalide")
 
+def menu_Comparaison():
+    print("1. Greedy vs e_Greedy")
+    print("2. UCB vs Greedy")
+    print("3. UCB vs e_Greedy")
+    print("4. UCB vs UCT")
+
+    choice = input("Votre choix: ")
+
+    if choice == '1':
+        data_GreedyvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+    elif choice == '2':
+        data_UCBvsGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+    elif choice == '3':
+        data_UCBvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+    elif choice == '4':
+        data_UCTvsUCB("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
+    else:
+        print("Choix invalide")
+
 
 
 
@@ -89,11 +112,6 @@ j1 = Joueur(1, NB_JETON)
 j2 = Joueur(-1, NB_JETON)
 jeu = Jeu(p, j1, j2)
 
-# data_UCTvsUCB("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
-# data_UCBvsGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
-# data_UCBvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
-data_GreedyvsEGreedy("data_experimental Joueur 1 vs Joueur 2", j1, j2, p, 200)
-
-# main_menu()
+main_menu()
 
 
