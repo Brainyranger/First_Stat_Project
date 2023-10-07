@@ -7,42 +7,66 @@ python main.py (sous windows)
 python3 main.py (sous linux) 
 
 
-Vous aurez des choix présentés sur le terminal : 
+Vous pouvez choisir différentes options en saisissant le numéro correspondant :
 
-|-- 1. Aléatoire
-|-- 2. Bandit Manchot
-|-- 3. Monte Carlo
-|-- 4. UCT
-|-- 5. Comparaison Exploration Exploitation Equilibré
-|-- 6. Exit
+- **Option 1 : Aléatoire**
 
-L'utilisateur peut choisir différentes options : 
+  En choisissant l'option 1, vous exécutez une expérience spécifique.
 
-S'il choisit "Aléatoire" (option 1), il exécute une expérience spécifique.
+- **Option 2 : Bandit Manchot**
 
-S'il choisit "Bandit Manchot" (option 2), il accède à un sous-menu pour choisir une variante du jeu :
-Bandit Manchot
-|-- 1. Baseline Aleatoire
-|-- 2. Greedy
-|-- 3. eGreedy
-|-- 4. UCB
+  En choisissant l'option 2, vous accédez à un sous-menu pour choisir une variante du jeu :
 
+  ```
+  Bandit Manchot
+  |-- 1. Baseline Aleatoire
+  |-- 2. Greedy
+  |-- 3. eGreedy
+  |-- 4. UCB
+  ```
 
-S'il choisit "Monte Carlo" (option 3), il accède à un sous-menu pour choisir entre deux expériences Monte Carlo : 
-Monte Carlo
-|-- 1. Monte Carlo vs Aléatoire
-|-- 2. Monte Carlo vs Monte Carlo
+  Vous pouvez sélectionner l'une de ces options pour exécuter une expérience spécifique avec la stratégie choisie.
 
-S'il choisit "UCT" (option 4), il accède à un sous-menu pour choisir entre deux expériences UCT : 
-UCT
-|-- 1. UCT vs Aléatoire
-|-- 2. UCT vs Monte Carlo
+- **Option 3 : Monte Carlo**
 
-S'il choisit "Comparaison Exploration Exploitation Equilibré" (option 5), il accède à un sous-menu pour choisir entre différentes comparaisons : 
-Comparaison Exploration Exploitation Equilibré
-|-- 1. Greedy vs e_Greedy
-|-- 2. UCB vs Greedy
-|-- 3. UCB vs e_Greedy
-|-- 4. UCB vs UCT
+  En choisissant l'option 3, vous accédez à un sous-menu pour choisir entre deux expériences Monte Carlo :
 
-S'il choisit "Exit" (option 6), le programme se termine.
+  ```
+  Monte Carlo
+  |-- 1. Monte Carlo vs Aléatoire
+  |-- 2. Monte Carlo vs Monte Carlo
+  ```
+
+  Sélectionnez l'option qui vous intéresse pour exécuter l'expérience correspondante.
+
+- **Option 4 : UCT**
+
+  En choisissant l'option 4, vous accédez à un sous-menu pour choisir entre deux expériences UCT :
+
+  ```
+  UCT
+  |-- 1. UCT vs Aléatoire
+  |-- 2. UCT vs Monte Carlo
+  ```
+
+  Sélectionnez l'option qui vous intéresse pour exécuter l'expérience correspondante.
+
+- **Option 5 : Comparaison Exploration Exploitation Equilibré**
+
+  En choisissant l'option 5, vous accédez à un sous-menu pour choisir entre différentes comparaisons :
+
+  ```
+  Comparaison Exploration Exploitation Equilibré
+  |-- 1. Greedy vs e_Greedy
+  |-- 2. UCB vs Greedy
+  |-- 3. UCB vs e_Greedy
+  |-- 4. UCB vs UCT
+  ```
+
+  Sélectionnez l'une de ces options pour effectuer la comparaison correspondante.
+
+- **Option 6 : Exit**
+
+  Si vous choisissez l'option 6, le programme se termine.
+
+C'est tout ! Vous pouvez maintenant utiliser le programme en choisissant l'option qui vous intéresse et en suivant les instructions affichées à l'écran.
