@@ -86,13 +86,7 @@ class BanditManchot:
         """
 
         action_choisie = np.random.choice(range(0, len(rec_moy_est))) #choisi une action disponible 
-        recompense = self.gain_bernoulli(self.probabilites_succes,action_choisie) # on détermine la récompense associé à l'action
-
-        #update 
-        nb_fois[action_choisie] += 1
-        rec_moy_est[action_choisie] = (rec_moy_est[action_choisie] * (nb_fois[action_choisie] - 1) + recompense) / nb_fois[action_choisie]
        
-
         return action_choisie
 
     def greedy_algorithm(self, rec_moy_est, nb_fois):
