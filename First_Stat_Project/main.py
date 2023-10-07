@@ -112,6 +112,7 @@ j1 = Joueur(1, NB_JETON)
 j2 = Joueur(-1, NB_JETON)
 jeu = Jeu(p, j1, j2)
 
+# Menu
 main_menu()
 
 
