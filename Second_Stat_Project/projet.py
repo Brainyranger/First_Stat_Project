@@ -2,9 +2,10 @@
 # David Kitoko
 
 from utils import *
-
 import pandas as pd
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 def getPrior(data):
     """
@@ -201,3 +202,268 @@ class MAP2DClassifier(APrioriClassifier):
 
 # Si on souhaite minimiser les faux positifs, le ML2DClassifier peut être préférable en raison de sa meilleure précision. Si on souhaite maintenir un bon équilibre entre la précision et le rappel, le MAP2DClassifier pourrait être un bon choix.
 #####
+
+def size_format(size):
+    """
+    Etant donné une taille en octets, retourne une valeur de taille donnée en une chaîne avec des unités appropriées (To, Go, Mo, Ko, o)    
+
+    Parameters
+     ---------
+      size : int 
+          La taille en octets à formater.
+       
+
+    Returns
+    -------
+       Une valeur de taille donnée en une chaîne avec des unités appropriées (To, Go, Mo, Ko, o) 
+    """
+    output = ""
+    units = ["To", "Go", "Mo", "Ko", "o"]
+    while size != 0:
+        output = "{}{} ".format(size % 1024, units.pop()) + output
+        size //= 1024
+    return output
+
+def nbParams(df,attrs: list=None):
+    """
+    Etant donné un dataframe et une liste des attributs, retourne Le nombre d'octets nécessaires pour la construction d'un classifieur       
+
+    Parameters
+     ---------
+      df : pandas.DataFram
+        le dataframe à tester
+        
+      attrs: list
+        la liste d'attributs à prendre en compte
+
+    Returns
+    -------
+       Le nombre d'octets nécessaires pour la construction d'un classifieur  
+    """
+    if attrs is None:
+        attrs = df.keys()
+    size = 8
+    for attr in attrs:
+        size *= len(np.unique(df[attr]))
+        
+    output = "{} variable(s) : {} octets".format(len(attrs), size)
+    if size < 1024:
+        print(output)
+    else:
+        print(output + " = " + size_format(size))
+        
+    return size
+
+def nbParamsIndep(df):
+    """
+    Etant donné un dataframe, retourne Le nombre d'octets nécessaires pour la construction d'un classifieur en supposant l'indépendance des  
+    variables       
+
+    Parameters
+     ---------
+      df : pandas.DataFram
+        le dataframe à tester
+
+
+    Returns
+    -------
+       Le nombre d'octets nécessaires pour la construction d'un classifieur en supposant l'indépendance des variables       
+    """
+    attrs = df.keys()
+    size = 0
+    for attr in attrs:
+        size += len(np.unique(df[attr]))
+        
+    output = "{} variable(s) : {} octets".format(len(attrs), 8*size)
+  
+    if size < 1024:
+        print(output)
+    else:
+        print(output + " = " + size_format(size))
+  
+    return 8 * size
+
+
+####
+# Question 3.3 :  indépendance partielle
+
+# Question 3.3.a : preuve $$P(A,B,C)=P(A)*P(B|A)*P(C|B)$$
+####
+
+#L'indépendance conditionnelle entre les variables aléatoires A, B et C sachant B signifie que la probabilité de A ne dépend pas de C #lorsqu'on connaît la valeur de B. Donc : $$P(A∣ B,C) = P(A∣ B)$$
+# décomposons la loi jointe P(A,B,C) en utilisant cette indépendance conditionnelle : 
+# $$P(A,B,C) = P(A∣ B,C)∗ P(B,C)$$ <-> $$P(A,B,C) = P(A∣ B) ∗ P(B,C)$$ (loi d'indépendance conditionnelle)
+#                                 <-> $$P(A,B,C) = P(A∣ B) * P(B∣ C)∗ P(C)$$ (loi de probabilité conditionnelle)
+#                                 <-> $$P(A,B,C) = (P(B∣ A) * P(A)/p(B)) * P(B∣ C)* P(C)$$ (Théorème de Bayes)
+#                                 <-> $$P(A,B,C) = P(B∣ A) * P(A) * P(C∣ B)$$ (simplification)
+#
+#Nous avons montré que l'indépendance conditionnelle entre A, B et C sachant B se traduit par une expression concise de la loi jointe #$$P(A,B,C) = P(A) * P(B∣ A) * P(C∣ B)$$
+
+# Question 3.3.b : complexité en indépendance partielle
+
+# Sans l'utilisation de l'indépendance conditionnelle :
+# Chaque variable A, B, et C a 5 valeurs possibles, ce qui signifie qu'il y a 5×5×5 =125 combinaisons possibles
+#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de l'indépendance conditionnelle serait donc de 125×8=1000  octets.
+
+#Avec l'utilisation de l'indépendance conditionnelle :
+#P(A), P(B∣ A), et P(C∣ B) nécessitent 5 nombres flottants chacun, ce qui donne un total de 5×3=15 nombres flottants possibles
+#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de l'indépendance conditionnelle serait donc de 15×8=120  octets.
+
+#Conclusion : 
+# Cette étude met en lumière l'importance de l'indépendance conditionnelle dans la modélisation des distributions de probabilités. En supposant certaines formes d'indépendance partielle, nous pouvons considérablement réduire la quantité de mémoire nécessaire pour représenter ces distributions, tout en préservant des informations cruciales pour l'analyse statistique.
+
+
+
+
+#### Question 4.2 : 
+
+#Dans un modèle Naïve Bayes, il est supposé que les attributs sont conditionnellement indépendants étant donné la cible (target). 
+#Cela signifie que la vraisemblance,se décompose de la manière suivante : 
+#P(att1,att2,att3,...∣target) = P(att1∣target) * P(att2∣target) * P(att3∣target) * ... * P(attn-1∣target)
+#La distribution a posteriori,se décompose de la manière suivante : 
+#P(att1,att2,att3,...∣target) ∝ P(att1∣target) * P(att2∣target) * P(att3∣target) * ... * P(attn-1∣target)
+#avec attn-1 : dernier attribut de la liste d'attributs 
+
+ 
+def drawNaiveBayes(df, attr):
+    """
+    A partir d'un dataframe et du nom de la colonne qui est la classe, dessine le graphe
+    
+    Parameters
+     ---------
+      df : pandas.DataFram
+        le dataframe à tester
+        
+      attr : String
+           le nom de la colonne qui est la classe
+
+    Returns
+    -------
+       dessine le graphe 
+    """
+    graph = ""
+    attrs = df.keys()
+    for attr1 in attrs:
+        if attr1 == attr: continue
+        graph += attr + "->" + attr1 + ";"
+    return drawGraph(graph)
+
+
+def nbParamsNaiveBayes(df, attr,attrs: list=None):
+    """
+     Etant donné un dataframe, et en utilisant l'hypothèse du Naive Bayes , retourne la taille mémoire nécessaire pour représenter les 
+     tables de probabilité d'un classifieur avec le modèle Naïve Bayes
+     
+      Parameters
+     ---------
+     
+      df : pandas.DataFram
+        le dataframe à tester
+        
+      attr : String
+           le nom de la colonne qui est la classe
+      
+      attrs : list
+             la liste des attributs 
+
+    Returns
+    -------
+       retourne la taille mémoire nécessaire pour représenter les tables de probabilité d'un classifieur avec le modèle Naïve Bayes
+     
+    """
+    if attrs is None:
+        attrs = df.keys()
+    size = 0
+    for attr1 in attrs:
+        if attr1 == attr: continue
+        size += len(np.unique(df[attr1]))
+        
+    u = len(np.unique(df[attr]))
+    size *= u
+    size += u
+    size = size * 8
+    output = "{} variable(s) : {} octets".format(len(attrs), size)
+    
+    if size < 1024:
+        print(output)
+    else:
+        print(output + " = " + size_format(size))
+    return size
+
+class MLNaiveBayesClassifier(APrioriClassifier):
+    """
+      Classifieur maximum de vraissemblance pour estimer la classe d'un individu en utilisant l'hypothèse du Naïve Bayes
+
+    """
+
+    def __init__(self, df):
+        self.probas = {attr: P2D_l(df, attr) for attr in df.keys()}
+
+    def estimProbas(self, attrs):
+        """
+        Etant donné une liste d'attributs, calcule la probabilité de vraissemblance
+     
+        Parameters
+         ---------
+      
+          attrs : list
+             la liste des attributs 
+
+        Returns
+        -------
+         calcule la probabilité de vraissemblance
+     
+        """
+        p_t0, p_t1 = 1, 1
+        for attr in self.probas:
+            if attr == 'target': continue
+            p_attr = self.probas[attr]
+            p_t0 *= p_attr[0][attrs[attr]] if attrs[attr] in p_attr[0] else 0
+            p_t1 *= p_attr[1][attrs[attr]] if attrs[attr] in p_attr[1] else 0
+        return {0: p_t0, 1: p_t1}
+
+    def estimClass(self, attrs):
+        p = self.estimProbas(attrs)
+        return 1 if p[1] > p[0] else 0
+    
+class MAPNaiveBayesClassifier(APrioriClassifier):
+    """
+    Classifieur maximum à posteriori pour estimer la classe d'un individu en utilisant l'hypothèse du Naïve Bayes
+
+    """
+
+    def __init__(self, df):
+        self.probas = {attr: P2D_l(df, attr) for attr in df.keys()}
+        p = getPrior(df)['estimation']
+        self.p1 = p 
+
+    def estimProbas(self, attrs):
+        """
+        Etant donné une liste d'attributs, calcule la probabilité à posteriori
+     
+        Parameters
+         ---------
+      
+          attrs : list
+             la liste des attributs 
+
+        Returns
+        -------
+         calcule la probabilité à posteriori
+     
+        """
+        p_t0, p_t1 = 1-self.p1, self.p1
+        for attr in self.probas:
+            if attr == 'target': continue
+            p_attr = self.probas[attr]
+            p_t0 *= p_attr[0][attrs[attr]] if attrs[attr] in p_attr[0] else 0
+            p_t1 *= p_attr[1][attrs[attr]] if attrs[attr] in p_attr[1] else 0
+        pa = p_t0 + p_t1
+        if pa != 0:
+            p_t0 /= pa
+            p_t1 /= pa
+        return {0: p_t0, 1: p_t1}
+
+    def estimClass(self, attrs):
+        p = self.estimProbas(attrs)
+        return 1 if p[1] > p[0] else 0
