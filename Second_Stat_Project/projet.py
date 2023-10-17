@@ -182,6 +182,10 @@ class ML2DClassifier(APrioriClassifier):
 
 
 class MAP2DClassifier(APrioriClassifier):
+    """ Classifieur maximum à posteriori pour estimer la classe d'un individu 
+    """
+    
+    
     def __init__(self, df, attr):
         super().__init__()
         self.attr = attr
@@ -190,6 +194,19 @@ class MAP2DClassifier(APrioriClassifier):
     
 
     def estimClass(self, attributs):
+        """
+        Estime la classe d'un individu en utilisant les attributs fournis.
+
+        Parameters
+        ---------
+        attrs: Dict[str,val] 
+            Le dictionnaire nom-valeur des attributs
+
+        Returns
+        -------
+        la classe 0 ou 1 estimée
+        """
+        
         if self.attr in attributs:
             attr_value = attributs[self.attr]            
             max_posterior_class = max(self.P2Dp[attr_value].keys(), key=lambda target: self.P2Dp[attr_value].get(target, 0))
