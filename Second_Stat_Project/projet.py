@@ -339,14 +339,14 @@ def nbParamsIndep(df):
 
 # Sans l'utilisation de l'indépendance conditionnelle :
 # Chaque variable A, B, et C a 5 valeurs possibles, ce qui signifie qu'il y a 5×5×5 =125 combinaisons possibles
-#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de l'indépendance conditionnelle serait donc de 125×8=1000  octets.
+#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de #l'indépendance conditionnelle serait donc de 125×8=1000  octets.
 
 #Avec l'utilisation de l'indépendance conditionnelle :
 #P(A), P(B∣ A), et P(C∣ B) nécessitent 5 nombres flottants chacun, ce qui donne un total de 5×3=15 nombres flottants possibles
-#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de l'indépendance conditionnelle serait donc de 15×8=120  octets.
+#Chaque probabilité peut être représentée par un nombre flottant sur 8 octets, donc La taille mémoire nécessaire sans l'utilisation de #l'indépendance conditionnelle serait donc de 15×8=120  octets.
 
 #Conclusion : 
-# Cette étude met en lumière l'importance de l'indépendance conditionnelle dans la modélisation des distributions de probabilités. En supposant certaines formes d'indépendance partielle, nous pouvons considérablement réduire la quantité de mémoire nécessaire pour représenter ces distributions, tout en préservant des informations cruciales pour l'analyse statistique.
+# Cette étude met en lumière l'importance de l'indépendance conditionnelle dans la modélisation des distributions de probabilités. En #supposant certaines formes d'indépendance partielle, nous pouvons considérablement réduire la quantité de mémoire nécessaire pour #représenter ces distributions, tout en préservant des informations cruciales pour l'analyse statistique.
 
 
 #Propositoin de code pour le 4.1 
@@ -655,7 +655,12 @@ class ReducedMAPNaiveBayesClassifier( MAPNaiveBayesClassifier):
       
         input_arg_str = input_arg_str[:-1]
         return drawGraph(input_arg_str)
+
     
+### Question 6.1
+######
+#Le point idéal dans un graphique de précision par rapport au rappel serait le point (1, 1), c'est-à-dire une précision maximale et un #rappel maximal. Cela signifierait que le classifieur est capable de faire des prédictions parfaites, sans erreurs. Cependant pour atteindre #ce point idéal cela est extrêmement difficile, voire impossible.
+#Pour comparer différents classifieurs dans cette représentation graphiques, les classifieurs qui s'approchent le plus du coin supérieur #gauche (plus proche de (1,1) sur le graphique) sont considérés comme meilleurs, car ils ont à la fois une haute précision et un haut rappel. 
 
 def mapClassifiers(dic, df):
     """
