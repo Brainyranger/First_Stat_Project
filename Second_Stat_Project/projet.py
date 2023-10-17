@@ -5,6 +5,7 @@ from utils import *
 import pandas as pd
 import numpy as np
 import matplotlib
+import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 def getPrior(data):
@@ -22,7 +23,9 @@ def getPrior(data):
     """
 
     moyenne = data["target"].sum() / len(data["target"])
-    ecart_type = (moyenne - moyenne**2)**0.5 / len(data["target"])**0.5
+    ecart_type = (moyenne * (1 - moyenne) / len(data["target"]))**0.5
+
+
 
     return {"estimation": moyenne, "min5pourcent": moyenne - 1.96 * ecart_type, "max5pourcent": moyenne + 1.96 * ecart_type}
 
@@ -36,7 +39,7 @@ class APrioriClassifier(AbstractClassifier):
 
         Parameters
         ---------
-        attr: Dict[str,val] 
+        attrs: Dict[str,val] 
             Le dictionnaire nom-valeur des attributs
 
         Returns
@@ -149,12 +152,28 @@ def P2D_p(df,attr):
     return probabilites
 
 class ML2DClassifier(APrioriClassifier):
+    """ Initialise un classifieur maximum de vraissemblance pour estimer la classe d'un individu en utilisant les lois de probabilité 
+    conditionnelles P(attr|target) 
+    """
+    
     def __init__(self, df, attr):
         super().__init__
         self.attr = attr
         self.P2D_l = P2D_l(df, attr)
 
     def estimClass(self, attrs):
+        """
+        A partir d'un dictionanire d'attributs en utilisant le maximum de vraissemblance, estime la classe 0 ou 1
+
+        Parameters
+        ---------
+        attrs: Dict[str,val] 
+            Le dictionnaire nom-valeur des attributs
+
+        Returns
+        -------
+        la classe 0 ou 1 estimée
+        """
         if self.attr in attrs:
             attr_value = attrs[self.attr]
             max_likehood = max(self.P2D_l.keys(), key=lambda target: self.P2D_l[target].get(attr_value, 0))
@@ -273,7 +292,7 @@ def nbParamsIndep(df):
     size = 0
     for attr in attrs:
         size += len(np.unique(df[attr]))
-        
+       
     output = "{} variable(s) : {} octets".format(len(attrs), 8*size)
   
     if size < 1024:
@@ -313,7 +332,24 @@ def nbParamsIndep(df):
 # Cette étude met en lumière l'importance de l'indépendance conditionnelle dans la modélisation des distributions de probabilités. En supposant certaines formes d'indépendance partielle, nous pouvons considérablement réduire la quantité de mémoire nécessaire pour représenter ces distributions, tout en préservant des informations cruciales pour l'analyse statistique.
 
 
+#Propositoin de code pour le 4.1 
 
+#def draw_independent_graph():
+    #arcs = 'A->B;A->C;A->D;A->E;B->C;B->D;B->E;C->D;C->E;D->E'
+    #return drawGraphHorizontal(arcs)
+
+# Dessin du graphe complètement indépendant
+#img__independent = draw_independent_graph()
+#img__independent.show()
+
+
+#def draw_dependent_graph():
+    #arcs = 'A->B;B->C;C->D;D->E'
+    #return drawGraphHorizontal(arcs)
+
+# Dessin du graphe sans aucune indépendance
+#img_dependent = draw_dependent_graph()
+#img_dependent.show()
 
 #### Question 4.2 : 
 
@@ -467,3 +503,166 @@ class MAPNaiveBayesClassifier(APrioriClassifier):
     def estimClass(self, attrs):
         p = self.estimProbas(attrs)
         return 1 if p[1] > p[0] else 0
+    
+
+def isIndepFromTarget(df, attr, x):
+    """
+    Vérifie si l'attribut attr est indépendant de la classe cible target au seuil de x% en utilisant le test du chi-carré.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Le dataframe contenant les données.
+
+    attr : str
+        Le nom de l'attribut que vous voulez tester.
+
+    x : float
+        Le seuil de confiance en pourcentage (0 < x < 100).
+
+    Returns
+    -------
+    bool
+        True si l'attribut est indépendant de la classe cible au seuil de x%, False sinon.
+    """
+    
+    contingency_table = pd.crosstab(df[attr], df['target'],margins=True, margins_name="S")
+    chi2 = 0
+    for j in df['target'].unique():
+        for i in df[attr].unique():
+            res_Obsertion = contingency_table[j][i]
+            res_attendues = contingency_table[j]['S'] * contingency_table['S'][i] / contingency_table['S']['S']
+            chi2 += ((res_Obsertion - res_attendues)**2)/res_attendues
+    return chi2 <= stats.chi2.ppf(1-x, len(df[attr].unique())-1)
+
+
+
+class ReducedMLNaiveBayesClassifier(MLNaiveBayesClassifier):
+    """
+    classifieur à maximum de vraissemblance pour attributs non indépendants de target à partir d'un seuil
+    """
+
+    def __init__(self, df,x):
+        self.keys_of_indep = self.get_keys(df, x)
+        MLNaiveBayesClassifier.__init__(self,  df[self.keys_of_indep])
+        
+
+    def get_keys(self, df, x):
+        """
+        Récupère les noms des attributs non indépendants de la classe cible en utilisant un seuil donné.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            Le dataframe contenant les données.
+            
+        x : float
+            Le seuil de confiance en pourcentage (0 < x < 100) pour déterminer l'indépendance des attributs par rapport à la classe cible.
+
+        Returns
+        -------
+        list
+            Une liste des noms des attributs non indépendants.
+        """
+        
+        keys_of_indep = []
+        for key in df.keys():
+            if key == 'target' or not isIndepFromTarget(df, key, x):
+                keys_of_indep.append(key)
+        return keys_of_indep
+    
+    
+    def draw(self):
+        """
+        Dessine un graphe de dépendance entre la classe cible et les attributs non indépendants.
+
+        Returns
+        -------
+        None
+              le graphe.
+        """
+        input_arg_str = ''
+        keys = self.keys_of_indep.copy()
+        for champ in keys:
+            if champ != "target":
+                input_arg_str += "{}->{};".format('target', champ)
+      
+        input_arg_str = input_arg_str[:-1]
+        return drawGraph(input_arg_str)
+
+class ReducedMAPNaiveBayesClassifier( MAPNaiveBayesClassifier):
+    """ Classifieur à maximum a posteriori pour attributs non indépendants de la classe cible à partir d'un seuil. 
+    """
+    
+    def __init__(self, df, x):
+        self.keys_of_indep = self.get_keys(df, x)
+        MAPNaiveBayesClassifier.__init__(self,  df[self.keys_of_indep])
+    
+    def get_keys(self, df, x):
+        """
+        Récupère les noms des attributs non indépendants de la classe cible en utilisant un seuil donné.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            Le dataframe contenant les données.
+            
+        x : float
+            Le seuil de confiance en pourcentage (0 < x < 100) pour déterminer l'indépendance des attributs par rapport à la classe cible.
+
+        Returns
+        -------
+        list
+            Une liste des noms des attributs non indépendants.
+        """
+        keys_of_indep = []
+        for key in df.keys():
+            if key == 'target' or not isIndepFromTarget(df, key, x):
+                keys_of_indep.append(key)
+        return keys_of_indep
+    
+    def draw(self):
+        """
+        Dessine un graphe de dépendance entre la classe cible et les attributs non indépendants.
+
+        Returns
+        -------
+        None
+              le graphe.
+        """
+        input_arg_str = ""
+        keys = self.keys_of_indep.copy()
+        for champ in keys:
+            if champ != "target":
+                input_arg_str += "{}->{};".format('target', champ)
+      
+        input_arg_str = input_arg_str[:-1]
+        return drawGraph(input_arg_str)
+    
+
+def mapClassifiers(dic, df):
+    """
+    Compare les performances de différents classifieurs en utilisant un DataFrame de données.
+
+    Parameters
+    ----------
+    dic : dict
+        Un dictionnaire où les clés sont des noms de classifieurs et les valeurs sont des instances de ces classifieurs.
+        
+    df : pandas.DataFrame
+        Le DataFrame contenant les données à tester.
+
+    Returns
+    -------
+    None
+        Cette fonction n'a pas de valeur de retour, elle affiche un graphique pour comparer les performances des classifieurs.
+    """
+    
+    for index, classifier in dic.items():
+        stats = classifier.statsOnDF(df)
+        x = stats['Précision']
+        y = stats['Rappel']
+        plt.scatter(x, y, marker='x', color="red")
+        plt.text(x, y, index)
+    plt.show()
+
